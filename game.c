@@ -52,23 +52,32 @@ void determineTurnOrder(GameState *game) {
             if (rolls[i] == rolls[i + 1]) {
                 tie = 1;
 
-                rolls[i] = rollDice();
-                rolls[i + 1] = rollDice();
-
-                printf("%s rolls %d.\n", playerName(game->players[i].name), rolls[i]);
-                printf("%s rolls %d.\n", playerName(game->players[i + 1].name), rolls[i + 1]);
-
-                if (rolls[i] < rolls[i + 1]) {
-                    int tempRoll = rolls[i];
-                    rolls[i] = rolls[i + 1];
-                    rolls[i + 1] = tempRoll;
-
-                    Player tempPlayer = game->players[i];
-                    game->players[i] = game->players[i + 1];
-                    game->players[i + 1] = tempPlayer;
+                int start = i;
+                int end = i;
+                while (end < 3 && rolls[end] == rolls[end + 1]) {
+                    end++;
+                }
+                
+                for (int k = start; k <= end; k++) {
+                    rolls[k] = rollDice();
+                    printf("%s rolls %d.\n", playerName(game->players[k].name), rolls[k]);
                 }
 
-                break;
+                for (int a = start; a < end; a++) {
+                    for (int b = start; b < end - (a - start); b++) {
+                        if (rolls[b] < rolls[b + 1]) {
+                            int tempRoll = rolls[b];
+                            rolls[b] = rolls[b + 1];
+                            rolls[b + 1] = tempRoll;
+
+                            Player tempPlayer = game->players[b];
+                            game->players[b] = game->players[b + 1];
+                            game->players[b + 1] = tempPlayer;
+                        }
+                    }
+                }
+
+                break; 
             }
         }
 
